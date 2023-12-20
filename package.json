@@ -11,8 +11,8 @@
   "license": "ISC",
   "dependencies": {
     "@thirdweb-dev/chains": "^0.1.61-nightly-d2001ca4-20231209002129",
-    "@thirdweb-dev/sdk": "^4.0.21-nightly-bcfa9463-20231209044446",
-    "@thirdweb-dev/wallets": "^2.3.0-nightly-1b1212d9-20231212225348",
+    "@thirdweb-dev/sdk": "0.0.0-dev-ebdeed5-20231220075526",
+    "@thirdweb-dev/wallets": "0.0.0-dev-ebdeed5-20231220075526",
     "dotenv": "^16.0.3",
     "ethers": "^5"
   },
