@@ -1,5 +1,10 @@
 import { config } from "dotenv";
-import { CeloAlfajoresTestnet, Polygon } from "@thirdweb-dev/chains";
+import {
+  CeloAlfajoresTestnet,
+  Goerli,
+  Mumbai,
+  Polygon,
+} from "@thirdweb-dev/chains";
 import { LocalWalletNode } from "@thirdweb-dev/wallets/evm/wallets/local-wallet-node";
 import {
   SmartWallet,
@@ -9,14 +14,16 @@ import {
 
 config();
 
-const PIMLICO_KEY = "YOUR_API_KEY";
-const chain = Polygon;
+const PIMLICO_KEY = process.env.PIMLICO_KEY;
+const chain = Goerli;
 
-const factoryAddressese = {
+const factoryAddresses = {
   [CeloAlfajoresTestnet.chainId]: "0x8fb9023405Cc2fDa7C1BB3B963767D121cAa698A",
   [Polygon.chainId]: "0x26ac92e1a4d98e8cc9266416e512c6e2ec1dc792",
+  [Goerli.chainId]: "0x6Bf55862203E4CFe8b96fD1391324cBb94DA22eE",
+  [Mumbai.chainId]: "0x9C2566fC7F727e18A30399fe9829b7AD2BA6770c",
 };
-const factoryAddress = factoryAddressese[chain.chainId];
+const factoryAddress = factoryAddresses[chain.chainId];
 const bundlerUrl = `https://api.pimlico.io/v1/${chain.slug}/rpc?apikey=${PIMLICO_KEY}`;
 
 const celoTest = async (
@@ -40,7 +47,7 @@ const celoTest = async (
   console.log("Deployed with transactionHash", txHash);
 };
 
-const polygonTest = async (
+const estimationTest = async (
   smartWallet: SmartWallet,
   adminWalletAddress: string
 ) => {
@@ -53,9 +60,11 @@ const polygonTest = async (
     estimate.details.transactionGasLimit.toString()
   );
   if (estimate.details.transactionGasLimit.eq(9000)) {
-    console.log(
-      "CallGasLimit returned was 9000!! it shouldnt be 9000!! should be at least 21k"
+    console.error(
+      "---> Estimation error: CallGasLimit returned was 9000!! it shouldnt be 9000!! should be at least 21k"
     );
+  } else {
+    console.log("---> Estimation success");
   }
 };
 
@@ -97,7 +106,9 @@ const main = async () => {
       await celoTest(smartWallet, adminWalletAddress);
       break;
     case Polygon.chainId:
-      await polygonTest(smartWallet, adminWalletAddress);
+    case Goerli.chainId:
+    case Mumbai.chainId:
+      await estimationTest(smartWallet, adminWalletAddress);
       break;
   }
 };
